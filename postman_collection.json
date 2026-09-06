@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "Hotel Offer Orchestrator",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Hotels - Overlap City",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=delhi",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [{ "key": "city", "value": "delhi" }]
+        }
+      }
+    },
+    {
+      "name": "Get Hotels - Price Filter",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=delhi&minPrice=5500&maxPrice=7000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [
+            { "key": "city", "value": "delhi" },
+            { "key": "minPrice", "value": "5500" },
+            { "key": "maxPrice", "value": "7000" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Hotels - No Results",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/api/hotels?city=mumbai",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "hotels"],
+          "query": [{ "key": "city", "value": "mumbai" }]
+        }
+      }
+    },
+    {
+      "name": "Supplier A Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/supplierA/hotels",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["supplierA", "hotels"]
+        }
+      }
+    },
+    {
+      "name": "Supplier B Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/supplierB/hotels",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["supplierB", "hotels"]
+        }
+      }
+    },
+    {
+      "name": "App Health",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      }
+    }
+  ]
+}
