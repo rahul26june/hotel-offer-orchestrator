@@ -139,10 +139,4 @@ Temporal orchestrates supplier calls in parallel, ensuring resilience and workfl
 
 The Docker setup runs the development script with Nodemon. A production deployment should use a compiled build and a process manager or container restart policy.
 
-
----
-
-✅ This README now clearly documents **Temporal + Redis + Docker Compose** integration, plus Postman validation.
-
-Would you like me to also generate a **`.github/workflows/ci.yml`** file so your repo automatically builds and tests the container with GitHub Actions?
 ```
