@@ -1,17 +1,20 @@
+import { proxyActivities } from "@temporalio/workflow";
+import type * as activities from "./activities";
 import { THotel } from "./types";
-import { supplierAHotels } from "./suppliers/supplierA";
-import { supplierBHotels } from "./suppliers/supplierB";
 
-export function orchestrate(city: string): THotel[] {
-  const supplierA = supplierAHotels.filter(h => h.city === city);
-  const supplierB = supplierBHotels.filter(h => h.city === city);
+export async function hotelWorkflow(city: string) {
+const { fetchSupplierA, fetchSupplierB } = proxyActivities<typeof activities>({
+  startToCloseTimeout: "1 minute"
+});
 
-  //console.log("supplierA", supplierA);
-  //console.log("supplierB", supplierB);
+const [aHotels, bHotels] = await Promise.all([
+    fetchSupplierA(city),
+    fetchSupplierB(city)
+  ]);
 
   const merged: Record<string, THotel> = {};
 
-  [...supplierA, ...supplierB].forEach(hotel => {
+  [...aHotels, ...bHotels].forEach(hotel => {
     if (!merged[hotel.name]) {
       merged[hotel.name] = hotel;
     } else {

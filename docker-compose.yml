@@ -4,14 +4,35 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
     volumes:
       - .:/app
       - /app/node_modules
     command: npm run dev
     depends_on:
       - redis
+      - temporal
+
+  worker:
+    build: .
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npx ts-node src/worker.ts
+    depends_on:
+      - temporal
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  temporal:
+    image: temporalio/temporal:latest
+    command: server start-dev --ip 0.0.0.0
+    ports:
+      - "7233:7233"
+      - "8233:8233"
