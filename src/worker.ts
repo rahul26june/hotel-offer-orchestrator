@@ -1,4 +1,5 @@
 import { NativeConnection, Worker } from "@temporalio/worker";
+import * as activities from "./activities";
 
 async function run() {
   const connection = await NativeConnection.connect({
@@ -7,7 +8,7 @@ async function run() {
   const worker = await Worker.create({
     connection,
     workflowsPath: require.resolve("./hotel_orchestrator"),
-    activities: require("./activities"),
+    activities,
     taskQueue: "hotel-task-queue"
   });
   await worker.run();

@@ -3,6 +3,7 @@ import Redis from "ioredis";
 import { Connection, Client } from "@temporalio/client";
 import { supplierAHotels } from "./suppliers/supplierA";
 import { supplierBHotels } from "./suppliers/supplierB";
+import { THotel } from "./types";
 
 const app = express();
 const PORT = 3000;
@@ -13,13 +14,13 @@ app.get("/api/hotels", async (req, res) => {
   if (!city) return res.status(400).json({ error: "city is required" });
 
   const cacheKey = `hotels:${city}`;
-  let hotels: any[] = [];
+  let hotels: THotel[] = [];
 
   // Try Redis cache
   const cached = await redis.get(cacheKey);
   if (cached) {
     console.log("Cache HIT for", cacheKey);
-    hotels = JSON.parse(cached);
+    hotels = JSON.parse(cached) as THotel[];
   } else {
     // Run Temporal workflow
     console.log("Cache Miss for", cacheKey);
@@ -50,8 +51,8 @@ app.get("/api/hotels", async (req, res) => {
 });
 
 // Supplier data
-app.get("/supplierA/hotels", (req: any, res: any) => res.json(supplierAHotels));
-app.get("/supplierB/hotels", (req: any, res: any) => res.json(supplierBHotels));
+app.get("/supplierA/hotels", (req, res) => res.json(supplierAHotels));
+app.get("/supplierB/hotels", (req, res) => res.json(supplierBHotels));
 
 // Health check
 app.get("/health", async (_, res) => {
