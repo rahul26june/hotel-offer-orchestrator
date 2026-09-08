@@ -18,9 +18,11 @@ app.get("/api/hotels", async (req, res) => {
   // Try Redis cache
   const cached = await redis.get(cacheKey);
   if (cached) {
+    console.log("Cache HIT for", cacheKey);
     hotels = JSON.parse(cached);
   } else {
     // Run Temporal workflow
+    console.log("Cache Miss for", cacheKey);
     const connection = await Connection.connect({
       address: process.env.TEMPORAL_ADDRESS || "localhost:7233"
     });
@@ -32,7 +34,8 @@ app.get("/api/hotels", async (req, res) => {
     });
     hotels = await handle.result();
 
-    await redis.set(cacheKey, JSON.stringify(hotels));
+    await redis.set(cacheKey, JSON.stringify(hotels), "EX", 3600);
+
   }
 
   // Apply price filtering
