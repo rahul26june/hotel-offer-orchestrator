@@ -2,36 +2,43 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # use v4, not v6
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4 # use v4, not v6
+        uses: actions/setup-node@v4
         with:
           node-version: "18"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Lint code
+      - name: Run ESLint
         run: npm run lint
 
-      - name: Build docker image
+      - name: Run Prettier check
+        run: npm run format -- --check
+
+      - name: TypeScript compile check
+        run: npx tsc --noEmit
+
+      - name: Build Docker image
         run: docker build -t hotel-offer-orchestrator .
 
       - name: Run Docker Compose
-        run: docker compose up -d && sleep 10 && curl -f http://localhost:3000/health
+        run: docker compose up -d && sleep 15 && curl -f http://localhost:3000/health
 
       - name: Stop Docker Compose
         if: always()
         run: docker compose down
+
+      - name: Run tests
+        run: npm test -- --watchAll=false

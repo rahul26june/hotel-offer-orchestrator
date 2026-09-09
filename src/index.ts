@@ -6,8 +6,7 @@ import { supplierBHotels } from "./suppliers/supplierB";
 import { THotel } from "./types";
 
 const app = express();
-const PORT = 3000;
-const redis = new Redis({ host: process.env.REDIS_HOST || "redis", port: 6379 });
+const redis = new Redis({ host: process.env.REDIS_HOST || "localhost", port: 6379 });
 
 app.get("/api/hotels", async (req, res) => {
   const { city, minPrice, maxPrice } = req.query;
@@ -64,4 +63,6 @@ app.get("/health", async (_, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+//app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+
+export default app;
