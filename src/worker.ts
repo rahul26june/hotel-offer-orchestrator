@@ -3,18 +3,18 @@ import * as activities from "./activities";
 
 async function run() {
   const connection = await NativeConnection.connect({
-    address: process.env.TEMPORAL_ADDRESS || "localhost:7233"
+    address: process.env.TEMPORAL_ADDRESS || "localhost:7233",
   });
   const worker = await Worker.create({
     connection,
     workflowsPath: require.resolve("./hotel_orchestrator"),
     activities,
-    taskQueue: "hotel-task-queue"
+    taskQueue: "hotel-task-queue",
   });
   await worker.run();
 }
 
-run().catch(err => {
+run().catch((err) => {
   console.error(err);
   process.exit(1);
 });

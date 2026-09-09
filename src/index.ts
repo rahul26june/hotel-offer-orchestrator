@@ -6,7 +6,10 @@ import { supplierBHotels } from "./suppliers/supplierB";
 import { THotel } from "./types";
 
 const app = express();
-const redis = new Redis({ host: process.env.REDIS_HOST || "localhost", port: 6379 });
+const redis = new Redis({
+  host: process.env.REDIS_HOST || "localhost",
+  port: 6379,
+});
 
 app.get("/api/hotels", async (req, res) => {
   const { city, minPrice, maxPrice } = req.query;
@@ -24,26 +27,27 @@ app.get("/api/hotels", async (req, res) => {
     // Run Temporal workflow
     console.log("Cache Miss for", cacheKey);
     const connection = await Connection.connect({
-      address: process.env.TEMPORAL_ADDRESS || "localhost:7233"
+      address: process.env.TEMPORAL_ADDRESS || "localhost:7233",
     });
     const client = new Client({ connection });
     const handle = await client.workflow.start("hotelWorkflow", {
       args: [city],
       taskQueue: "hotel-task-queue",
-      workflowId: `hotel-${city}-${Date.now()}`
+      workflowId: `hotel-${city}-${Date.now()}`,
     });
     hotels = await handle.result();
 
     await redis.set(cacheKey, JSON.stringify(hotels), "EX", 3600);
-
   }
 
   // Apply price filtering
   let filtered = hotels;
   if (minPrice || maxPrice) {
     const min = minPrice ? parseInt(minPrice as string) : 0;
-    const max = maxPrice ? parseInt(maxPrice as string) : Number.MAX_SAFE_INTEGER;
-    filtered = hotels.filter(h => h.price >= min && h.price <= max);
+    const max = maxPrice
+      ? parseInt(maxPrice as string)
+      : Number.MAX_SAFE_INTEGER;
+    filtered = hotels.filter((h) => h.price >= min && h.price <= max);
   }
 
   res.json(filtered);
